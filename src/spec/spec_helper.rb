@@ -4,6 +4,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'parameter'
 require 'parameters_handler'
+require 'database_handler'
 
 RSpec.configure do |config|
     config.order = 'random'
