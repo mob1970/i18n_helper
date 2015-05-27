@@ -5,9 +5,9 @@ require 'fileutils'
 require 'rspec'
 require 'pry'
 
-require 'parameter'
-require 'parameters_handler'
-require 'database_handler'
+require 'handlers/parameter'
+require 'handlers/parameters_handler'
+require 'handlers/database_handler'
 require 'utils/file_utils'
 
 RSpec.configure do |config|
