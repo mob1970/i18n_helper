@@ -3,15 +3,20 @@ require 'spec_helper'
 RSpec.describe DatabaseHandler do
 
   before :each do
-    FileUtils.rm('./spec/db/project_with_table.db')
+    FileUtils.rm('./spec/db/project_with_table.db', :force => true )
     FileUtils.cp('./spec/db/samples/empty_with_table.db', './spec/db/project_with_table.db')
 
-    FileUtils.rm('./spec/db/project_without_table.db')
+    FileUtils.rm('./spec/db/project_without_table.db', :force => true )
     FileUtils.cp('./spec/db/samples/empty_without_table.db', './spec/db/project_without_table.db')
 
     locale = 'en'
     key = 'test.text'
     value = 'This is the spec text'
+  end
+
+  after :all do
+    FileUtils.rm('./spec/db/project_with_table.db', :force => true )
+    FileUtils.rm('./spec/db/project_without_table.db', :force => true )
   end
 
   describe 'database access types' do

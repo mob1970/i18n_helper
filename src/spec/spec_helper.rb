@@ -5,6 +5,7 @@ require 'fileutils'
 require 'rspec'
 require 'pry'
 
+require 'exceptions/exceptions'
 require 'handlers/parameter'
 require 'handlers/parameters_handler'
 require 'handlers/database_handler'

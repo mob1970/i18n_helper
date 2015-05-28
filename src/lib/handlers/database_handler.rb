@@ -52,7 +52,7 @@ class DatabaseHandler
   private
 
   def self.connection(project, create_if_not_exist=false)
-    raise DatabaseNotExist.new unless create_if_not_exist
+    raise NonExistingDatabaseException.new unless create_if_not_exist or Utils::FileUtils.file_exist?("#{Utils::FileUtils::home_directory}/#{project}.db")
     SQLite3::Database.new("#{Utils::FileUtils::home_directory}/#{project}.db")
   end
 end

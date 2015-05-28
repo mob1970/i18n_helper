@@ -1,0 +1,1 @@
+class NonExistingDatabaseException < StandardError; end
