@@ -10,6 +10,7 @@ require 'handlers/parameter'
 require 'handlers/parameters_handler'
 require 'handlers/database_handler'
 require 'utils/file_utils'
+require 'processors/message_processor'
 
 RSpec.configure do |config|
   config.order = 'random'
