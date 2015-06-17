@@ -1,26 +1,33 @@
+require './lib/handlers/database_handler'
+require './lib/utils/file_utils'
+
 class MessageProcessor
-  SET_PROJECT   = 'set project'
-  REFRESH_CACHE = 'refresh cache'
-  QUERY         = 'query'
 
   def self.process(project, message)
     case message.strip
       when /set project (.+)/
-        MessageProcessorResult.new(SET_PROJECT, $1.strip)
+        MessageProcessorResult.new(MessageProcessorResult::SET_PROJECT, $1.strip)
+      when 'create database'
+        create_database(project)
+        MessageProcessorResult.new(MessageProcessorResult::CREATE_DATABASE, MessageProcessorResult::CREATE_DATABASE)
       when 'refresh cache'
         refresh_cache(project)
-        MessageProcessorResult.new(REFRESH_CACHE)
+        MessageProcessorResult.new(MessageProcessorResult::REFRESH_CACHE, MessageProcessorResult::REFRESH_CACHE)
       when /query (.+)/
-        MessageProcessorResult.new(QUERY, query_information(project, $1))
+        MessageProcessorResult.new(MessageProcessorResult::QUERY, query_information(project, $1))
+      when 'quit', 'logout'
+        MessageProcessorResult.new(MessageProcessorResult::QUIT, MessageProcessorResult::QUIT)
       else
-        'Unknown action'
+        MessageProcessorResult.new(MessageProcessorResult::UNKNOWN_ACTION, MessageProcessorResult::UNKNOWN_ACTION)
     end
   end
 
   private
 
-  #def change_project(message)
-  #end
+  def self.create_database(project)
+    Utils::FileUtils::create_home_directory unless Utils::FileUtils::file_exist?(Utils::FileUtils::home_directory)
+    DatabaseHandler::create_database(project)
+  end
 
   def self.refresh_cache(project)
     DatabaseHandler::delete(project)
@@ -33,10 +40,42 @@ class MessageProcessor
 end
 
 class MessageProcessorResult
+  SET_PROJECT     = 'set project'
+  REFRESH_CACHE   = 'refresh cache'
+  QUERY           = 'query'
+  UNKNOWN_ACTION  = 'unknown action'
+  QUIT            = 'quit'
+  LOGOUT          = 'logout'
+  CREATE_DATABASE = 'create database'
+
   attr_reader :action, :output
 
   def initialize(action, output=nil)
     @action = action
     @output = output
+  end
+
+  def setting_project?
+    @action == SET_PROJECT
+  end
+
+  def refreshing_cahce?
+    @action == REFRESH_CACHE
+  end
+
+  def querying?
+    @action == QUERY
+  end
+
+  def unknown_action?
+    @action == UNKNOWN_ACTION
+  end
+
+  def create_database?
+    @action == CREATE_DATABASE
+  end
+
+  def quit?
+    @action == QUIT || @action == LOGOUT
   end
 end

@@ -1,4 +1,6 @@
 require 'sqlite3'
+require './lib/utils/file_utils'
+require './lib/exceptions/exceptions'
 
 class DatabaseHandler
 

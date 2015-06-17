@@ -11,7 +11,7 @@ class ConsoleHandler
 
   def ask_for_input
     print '> '
-    gets.chomp
+    STDIN.gets().chomp
   end
 
   def print_output(message)

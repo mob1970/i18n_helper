@@ -1,3 +1,6 @@
+require './lib/handlers/console_handler'
+require './lib/processors/message_processor'
+
 class I18nHelper
   def initialize
     start(ARGV)
@@ -5,14 +8,24 @@ class I18nHelper
 
   def start(args)
     print_error(1) and return unless args_ok?(args)
-    project = ARGV[0]
+    @project = ARGV[0]
 
     ConsoleHandler.new.start_interaction do |input|
-      MessageProcessor.process(input)
+      response = MessageProcessor.process(@project, input)
+      post_process_actions(response)
+      response.output
     end
   end
 
   private
+
+  def post_process_actions(response)
+    @project = response.output if response.setting_project?
+    if response.quit?
+      print_goodbye_message
+      Kernel.exit
+    end
+  end
 
   def args_ok?(args)
     args.size == 1
@@ -35,6 +48,10 @@ class I18nHelper
       else
         'Unexpected error.'
     end
+  end
+
+  def print_goodbye_message
+    puts 'Thanks for using I18nHelper. See you next time.'
   end
 end
 
