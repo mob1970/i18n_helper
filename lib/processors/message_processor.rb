@@ -1,4 +1,5 @@
 require './lib/handlers/database_handler'
+require './lib/formatters/output_formatter'
 require './lib/utils/file_utils'
 
 class MessageProcessor
@@ -14,7 +15,8 @@ class MessageProcessor
         refresh_cache(project)
         MessageProcessorResult.new(MessageProcessorResult::REFRESH_CACHE, MessageProcessorResult::REFRESH_CACHE)
       when /query (.+)/
-        MessageProcessorResult.new(MessageProcessorResult::QUERY, query_information(project, $1))
+        query_information(project, $1.strip)
+        MessageProcessorResult.new(MessageProcessorResult::QUERY, OutputFormatter::format(query_information(project, $1)))
       when 'quit', 'logout'
         MessageProcessorResult.new(MessageProcessorResult::QUIT, MessageProcessorResult::QUIT)
       else
