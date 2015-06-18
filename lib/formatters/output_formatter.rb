@@ -2,14 +2,10 @@ class OutputFormatter
   def self.format(rows)
     result = ""
 
-    sizes = preprocess_column_widths(rows)
-
     unless rows.empty?
-      result += "#{rows.first.keys.join('|')}\n"
-    end
-
-    rows.each do |row|
-      result += "#{row.values.join('|')}\n" unless row.empty?
+      sizes = preprocess_column_widths(rows)
+      result += format_headers(rows, sizes)
+      result += format_values(rows, sizes)
     end
 
     result
@@ -17,7 +13,33 @@ class OutputFormatter
 
   private
 
-  def preprocess_column_widths(rows)
+  def self.format_headers(rows, sizes)
+    result = ''
+
+    formatted_values = []
+    rows.first.keys.each do |item|
+      formatted_values << append_spaces_at_the_end(item.to_s, sizes[item])
+    end
+    result += "#{formatted_values.join(' | ')}\n"
+
+    result
+  end
+
+  def self.format_values(rows, sizes)
+    result = ''
+
+    rows.each do |row|
+      formatted_values = []
+      row.keys.each do |key|
+        formatted_values << append_spaces_at_the_end(row[key], sizes[key])
+      end
+      result += "#{formatted_values.join(' | ')}\n"
+    end
+
+    result + "\n"
+  end
+
+  def self.preprocess_column_widths(rows)
     {
       :key => calculate_max_key_value_length(rows),
       :value => calculate_max_value_value_length(rows),
@@ -25,28 +47,28 @@ class OutputFormatter
     }
   end
 
-  def append_spaces_at_the_end(string, number)
-    string  +(' '*number)
+  def self.append_spaces_at_the_end(string, number)
+    ((number - string.strip.length) > 0 ) ? string.strip  + (' ' * (number - string.strip.length)) : string.strip
   end
 
-  def calculate_max_key_value_length(rows)
+  def self.calculate_max_key_value_length(rows)
     calculate_max_value_length(rows, :key)
   end
 
-  def calculate_max_value_value_length(rows)
+  def self.calculate_max_value_value_length(rows)
     calculate_max_value_length(rows, :value)
   end
 
-  def calculate_max_locale_value_length(rows)
+  def self.calculate_max_locale_value_length(rows)
     calculate_max_value_length(rows, :locale)
   end
 
-  def calculate_max_value_length(rows, key)
+  def self.calculate_max_value_length(rows, key)
     result = 0
     rows.each do |row|
       result = row[key].strip.length if row[key].strip.length > result
     end
 
-    result
+    (key.to_s.strip.length > result) ? key.to_s.strip.length : result
   end
 end
