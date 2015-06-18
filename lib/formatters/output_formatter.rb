@@ -33,7 +33,7 @@ class OutputFormatter
       row.keys.each do |key|
         formatted_values << append_spaces_at_the_end(row[key], sizes[key])
       end
-      result += "#{formatted_values.join(' | ')}\n"
+      result += "#{formatted_values.join(' | ').strip}\n"
     end
 
     result + "\n"
