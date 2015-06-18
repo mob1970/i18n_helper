@@ -40,27 +40,16 @@ class OutputFormatter
   end
 
   def self.preprocess_column_widths(rows)
-    {
-      :key => calculate_max_key_value_length(rows),
-      :value => calculate_max_value_value_length(rows),
-      :locale => calculate_max_locale_value_length(rows)
-    }
+    result = {}
+    rows.first.keys.each do |key|
+      result[key] = self.calculate_max_value_length(rows, key)
+    end
+
+    result
   end
 
   def self.append_spaces_at_the_end(string, number)
     ((number - string.strip.length) > 0 ) ? string.strip  + (' ' * (number - string.strip.length)) : string.strip
-  end
-
-  def self.calculate_max_key_value_length(rows)
-    calculate_max_value_length(rows, :key)
-  end
-
-  def self.calculate_max_value_value_length(rows)
-    calculate_max_value_length(rows, :value)
-  end
-
-  def self.calculate_max_locale_value_length(rows)
-    calculate_max_value_length(rows, :locale)
   end
 
   def self.calculate_max_value_length(rows, key)
